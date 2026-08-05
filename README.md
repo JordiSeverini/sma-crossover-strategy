@@ -1,6 +1,6 @@
 # SMA Trading Signal Generator
 
-A Python-based trading signal generator that uses moving average crossovers on historical stock data (AAPL via yFinance) to simulate rule-based buy and sell signals.
+A Python-based trading signal generator that uses A simple moving average crossovers on historical stock data (AAPL via yFinance) to simulate rule-based buy and sell signals.
 
 ## Overview
 
