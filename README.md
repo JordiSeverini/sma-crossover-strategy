@@ -12,6 +12,7 @@ This project demonstrates a simple algorithmic trading strategy using technical 
 - Calculates 20-day and 50-day simple moving averages
 - Generates buy/sell signals using crossover logic
 - Identifies trade entry and exit points using signal changes
+- Flags whether a signal is backed by above-average trading volume
 
 ## Technologies Used
 
@@ -24,6 +25,7 @@ This project demonstrates a simple algorithmic trading strategy using technical 
 
 - Buy signal: when the 20-day moving average crosses above the 50-day moving average
 - Sell signal: when the 20-day moving average crosses below the 50-day moving average
+- Volume confirmation: flags whether daily volume exceeds its 50-day rolling average, indicating stronger conviction behind a signal
 
 ## Future Improvements
 
