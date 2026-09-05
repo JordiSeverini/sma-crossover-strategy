@@ -8,7 +8,7 @@
 import sys
 import os
 import pandas as pd
-
+import pickle 
 
 # main_analysis.py lives in analysis/, but backtest.py and data.py live in
 # src/ (a sibling folder) -- Python won't look there by default, so this
@@ -16,9 +16,9 @@ import pandas as pd
 # "from src.backtest import ..." find them.
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
+from src.run_experiments import run_all_experiments
 from src.backtest import run_backtest, run_grid_search, display_results
 from src.data import get_price_data
-
 from src.Thesis_checks.overfitting_check import check_overfitting
 from src.Thesis_checks.instability_check import check_parameter_instability
 from src.Thesis_checks.drawdown_check import check_drawdown_protection
@@ -39,93 +39,6 @@ for short_w in short_windows:
             window_pairs.append((short_w, long_w))
 
 # ===================================================
-# ALL-EXPERIMENTS FUNCTION #
-# ===================================================
-def run_all_experiments(ticker, window_pairs):
-    print(f"\n{'='*60}")
-    print(f"RUNNING EXPERIMENTS FOR: {ticker}")
-    print(f"{'='*60}")
-
-    # DOWNLOAD DATA #
-    df_30yr = get_price_data(ticker, start="1996-01-01")
-
-    # SPLIT INTO TWO 15-YEAR HALVES #
-    split_date = "2011-01-01"
-    first_half = df_30yr[df_30yr.index < split_date]
-    second_half = df_30yr[df_30yr.index >= split_date]
-
-    print(f"First Half:  {first_half.index.min().date()} to {first_half.index.max().date()} ({len(first_half)} days)")
-    print(f"Second Half: {second_half.index.min().date()} to {second_half.index.max().date()} ({len(second_half)} days)")
-
-    # --- Direction A: train on first half, test on second half ---
-    results_a = run_grid_search(first_half, window_pairs)
-    display_results(results_a, f"[{ticker}] Direction A Training (1996-2011)")
-
-    # best_a isolates and stores the first dict row of the resuts_a
-    best_a = results_a.iloc[0]
-    # Stores the best_short_a and best_long _a by accessing the short_window and long_window coumns
-    best_short_a, best_long_a = int(best_a["Short_Window"]), int(best_a["Long_Window"])
-    # The excess return of whichever window pair scored best during Training
-    train_excess_a = best_a["Excess_Return"]
-
-    (test_market_a, test_strategy_a,test_market_sharpe_a, test_strategy_sharpe_a,test_market_dd_a, test_strategy_dd_a) = run_backtest(second_half, short_window=best_short_a, long_window=best_long_a)
-    # the excess return of that same specific window pair when it's re-run on Direction A's test data
-    test_excess_a = test_strategy_a - test_market_a
-
-    print(f"\n--- [{ticker}] Direction A Out-of-Sample Test: SMA({best_short_a}, {best_long_a}) on 2011-2026 ---")
-    print(f"Buy & Hold Return:       {test_market_a:.2%}")
-    print(f"Strategy Return:         {test_strategy_a:.2%}")
-    print(f"Excess Return:           {test_excess_a:.2%}")
-    print(f"Buy & Hold Sharpe:       {test_market_sharpe_a:.2f}")
-    print(f"Strategy Sharpe:         {test_strategy_sharpe_a:.2f}")
-    print(f"Buy & Hold Max Drawdown: {test_market_dd_a:.2%}")
-    print(f"Strategy Max Drawdown:   {test_strategy_dd_a:.2%}")
-
-    # --- Direction B: train on second half, test on first half ---
-    results_b = run_grid_search(second_half, window_pairs)
-    display_results(results_b, f"[{ticker}] Direction B Training (2011-2026)")
-
-    # best_a isolates and stores the first dict row of the resuts_b
-    best_b = results_b.iloc[0]
-    # Stores the best_short_b and best_long _b by accessing the short_window and long_window coumns
-    best_short_b, best_long_b = int(best_b["Short_Window"]), int(best_b["Long_Window"])
-    # The excess return of whichever window pair scored best during Training
-    train_excess_b = best_b["Excess_Return"]
-
-    (test_market_b, test_strategy_b,test_market_sharpe_b, test_strategy_sharpe_b,test_market_dd_b, test_strategy_dd_b) = run_backtest(first_half, short_window=best_short_b, long_window=best_long_b)
-    # The excess return of that same specific window pair when it's re-run on Direction B's test data
-    test_excess_b = test_strategy_b - test_market_b
-
-    print(f"\n--- [{ticker}] Direction B Out-of-Sample Test: SMA({best_short_b}, {best_long_b}) on 1996-2011 ---")
-    print(f"Buy & Hold Return:       {test_market_b:.2%}")
-    print(f"Strategy Return:         {test_strategy_b:.2%}")
-    print(f"Excess Return:           {test_excess_b:.2%}")
-    print(f"Buy & Hold Sharpe:       {test_market_sharpe_b:.2f}")
-    print(f"Strategy Sharpe:         {test_strategy_sharpe_b:.2f}")
-    print(f"Buy & Hold Max Drawdown: {test_market_dd_b:.2%}")
-    print(f"Strategy Max Drawdown:   {test_strategy_dd_b:.2%}")
-
-    # --- Hindsight check across full 30 years ---
-    results_full = run_grid_search(df_30yr, window_pairs)
-    display_results(results_full, f"[{ticker}] Hindsight Check: All Windows Across Full 30 Years")
-
-    # Return a summary to compare tickers side by side later
-    return {
-        "ticker": ticker,
-        "results_a": results_a,
-        "results_b": results_b,
-        "results_full": results_full,
-        "best_short_a": best_short_a, 
-        "best_long_a": best_long_a,
-        "train_excess_a": train_excess_a, 
-        "test_excess_a": test_excess_a,
-        "best_short_b": best_short_b, 
-        "best_long_b": best_long_b,
-        "train_excess_b": train_excess_b, 
-        "test_excess_b": test_excess_b,
-    }
-
-# ===================================================
 # RUN FOR ALL TICKERS #
 # ===================================================
 tickers = ["AAPL", "SPY", "DIS", "KO"]
@@ -134,6 +47,12 @@ all_results = {}
 for ticker in tickers:
     all_results[ticker] = run_all_experiments(ticker, window_pairs)
 
+# Save all_results so chart scripts can load it instantly, without
+# re-running the full four-ticker experiment suite every time
+os.makedirs("outputs", exist_ok=True)
+with open("outputs/all_results.pkl", "wb") as f:
+    pickle.dump(all_results, f)
+print("\nSaved all_results to outputs/all_results.pkl")
 
 # ===================================================
 # SUMMARY ACROSS ALL TICKERS #

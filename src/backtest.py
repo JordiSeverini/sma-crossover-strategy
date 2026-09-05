@@ -14,7 +14,7 @@ import numpy as np
 # ===================================================
 # Wraps the whole SMA crossover strategy into a reusable function, to
 # call it repeatedly with different short/long window values 
-def run_backtest(price_df, short_window, long_window, transaction_cost_pct=0.001):
+def run_backtest(price_df, short_window, long_window, transaction_cost_pct = 0.001):
     df = price_df.copy()  # work on a copy
 
     # ===================================================
@@ -169,3 +169,30 @@ def display_results(results_df, label):
         display_df[col] = display_df[col].apply(lambda x : f"{x:.2f}")
     print(f"\n--- {label} ---")
     print(display_df.to_string(index=False))
+    
+
+# ===================================================
+# BUILD BACKTEST DATAFRAME (for plotting/inspection) #
+# ===================================================
+# Returns the full day-by-day DataFrame instead of just summary stats --
+# used for the actual time series (e.g. for charting equity
+# curves), not just the final numbers.
+def build_backtest_dataframe(price_df, short_window, long_window, transaction_cost_pct=0.001):
+    df = price_df.copy()
+
+    df["SMA_SHORT"] = df["Close"].rolling(window=short_window).mean()
+    df["SMA_LONG"] = df["Close"].rolling(window=long_window).mean()
+
+    df["Signal"] = np.where(df["SMA_SHORT"] > df["SMA_LONG"], 1, 0)
+    df.loc[df["SMA_LONG"].isna(), "Signal"] = np.nan
+
+    df["Market_Return"] = df["Close"].pct_change()
+    df["Strategy_Return"] = df["Market_Return"] * df["Signal"].shift(1)
+
+    trade_occurred = df["Signal"].diff().abs() > 0
+    df.loc[trade_occurred, "Strategy_Return"] = df.loc[trade_occurred, "Strategy_Return"] - transaction_cost_pct
+
+    df["Cumulative_Market"] = (1 + df["Market_Return"]).cumprod()
+    df["Cumulative_Strategy"] = (1 + df["Strategy_Return"]).cumprod()
+
+    return df
