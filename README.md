@@ -36,7 +36,6 @@ sma-crossover-strategy/
 │   ├── figures/                    # Generated chart images
 │   └── all_results.pkl             # Saved results, loaded by chart scripts
 ├── Report/
-│   ├── Technical_report.md         # Full write-up: methodology, findings, figures
 │   └── Technical_report.pdf        # PDF export of the report
 ├── src/
 │   ├── Thesis_checks/               # Overfitting, parameter instability, drawdown checks

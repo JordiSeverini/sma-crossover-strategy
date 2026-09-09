@@ -2,17 +2,15 @@
 
 ## Abstract
 
-Simple moving average (SMA) crossover strategies are among the most widely referenced technical trading rules, promising to capture upside trends while sitting out drawdowns. This study tests whether that promise holds up. The SMA crossover is tested against a buy-and-hold benchmark across four tickers (AAPL, SPY, DIS, KO) spanning 30 years of daily price data (1996-2026), using a two-directional train/test design, a full-period hindsight ceiling check, risk-adjusted performance metrics, and realistic transaction costs. Across every method of evaluation, SMA crossover failed to demonstrate a durable, generalizable edge over buy-and-hold. This is driven in part by a structural limitation of the strategy itself, trades are placed one day behind the signal that triggers them, meaning the strategy is always confirming a trend after it has already begun to move, and in part by market conditions, since much of the test period, particularly since the 2009 financial-crisis recovery, has been an unusually strong and sustained bull market, an environment in which any strategy that periodically exits the market forfeits a share of relentless compounding it can rarely make back.
-
- This does not mean SMA crossover never works. Rather, it means that over a long period dominated by sustained upward compounding, buying and holding is a very difficult benchmark to beat. In the course of testing this, the study also surfaced a broader methodological point, the window pair identified as "optimal" in-sample consistently failed to generalize out-of-sample and shifted substantially depending on which historical period was used to select it, a pattern consistent with backtest overfitting rather than genuine signal.
+Simple moving average (SMA) crossover strategies are among the most widely referenced technical trading rules, promising to capture upside trends while sitting out drawdowns. This study tests whether that promise holds up: SMA crossover is tested against a buy-and-hold benchmark across four tickers (AAPL, SPY, DIS, KO) spanning 30 years of daily price data (1996-2026), using a two-directional train/test design, a full-period hindsight ceiling check, risk-adjusted performance metrics, and realistic transaction costs. Across every method of evaluation, SMA crossover failed to demonstrate a durable, generalizable edge over buy-and-hold. This is driven in part by a structural limitation of the strategy itself: trades are placed one day behind the signal that triggers them, meaning the strategy is always confirming a trend after it has already begun to move, and in part by market conditions, since much of the test period, particularly since the 2009 financial-crisis recovery, has been an unusually strong and sustained bull market, an environment in which any strategy that periodically exits the market forfeits a share of relentless compounding it can rarely make back. This does not mean SMA crossover never works. Rather, it means that over a long period dominated by sustained upward compounding, buying and holding is a very difficult benchmark to beat. In the course of testing this, the study also surfaced a broader methodological point: the window pair identified as "optimal" in-sample consistently failed to generalize out-of-sample and shifted substantially depending on which historical period was used to select it, a pattern consistent with backtest overfitting rather than genuine signal.
 
 ---
 
 ## Executive Summary
 
-This project tests whether a simple moving average (SMA) crossover trading strategy can beat a buy-and-hold benchmark, across four tickers (AAPL, SPY, DIS, KO) and 30 years of daily price history (1996-2026). Across every validation method applied, it could not,SMA crossover consistently underperformed buy-and-hold, whether measured on raw return, out-of-sample tested return, or even a full-period hindsight ceiling with no restriction on foresight.
+This project tests whether a simple moving average (SMA) crossover trading strategy can beat a buy-and-hold benchmark, across four tickers (AAPL, SPY, DIS, KO) and 30 years of daily price history (1996-2026). Across every validation method applied, it could not: SMA crossover consistently underperformed buy-and-hold, whether measured on raw return, out-of-sample tested return, or even a full-period hindsight ceiling with no restriction on foresight.
 
-Part of this result is structural, SMA crossover trades on the *prior* day's signal, so by the time a crossover confirms a trend, that trend has already been underway. The strategy is always reacting a step late. Part of it is regime-specific much of the 30-year test window, and especially the years since the 2009 financial-crisis recovery, has been an extraordinarily strong and sustained bull market. In an environment where the market mostly climbs with few deep, lasting pullbacks, a strategy that periodically exits to protect against declines gives up participation in exactly the gains it can least afford to miss, and because gains compound, that gap widens over time rather than closing. This is a property of the market regime tested, not proof the strategy can never work.
+Part of this result is structural: SMA crossover trades on the *prior* day's signal, so by the time a crossover confirms a trend, that trend has already been underway. The strategy is always reacting a step late. Part of it is regime-specific: much of the 30-year test window, and especially the years since the 2009 financial-crisis recovery, has been an extraordinarily strong and sustained bull market. In an environment where the market mostly climbs with few deep, lasting pullbacks, a strategy that periodically exits to protect against declines gives up participation in exactly the gains it can least afford to miss, and because gains compound, that gap widens over time rather than closing. This is a property of the market regime tested, not proof the strategy can never work; a period with more sustained declines could plausibly tell a different story.
 
 Using a two-directional train/test (reverse validation) design, a full-period hindsight ceiling check, risk-adjusted metrics (Sharpe Ratio, Max Drawdown), and realistic transaction costs, three consistent findings emerged. An Overfitting Pattern: window pairs that appeared to beat buy-and-hold during training consistently failed once tested on unseen data, in 5 of 8 train/test trials. In the remaining 3, the strategy never found a genuine in-sample edge at all, an even more direct form of failure. One trial (SPY, Direction B) showed the reverse pattern, most plausibly attributable to chance.
 
@@ -28,7 +26,7 @@ Buy-and-hold outperformed the best available SMA crossover strategy on raw retur
 
 ### 1.1 The Strategy
 
-The SMA crossover strategy computes two rolling averages of daily closing price, a "short" window and a "long" window. When the short-window average rises above the long-window average, the strategy holds a long position (fully invested), when it falls below, the strategy exits to cash. Daily strategy returns are calculated using the *prior* day's signal, so the backtest never uses information unavailable at the time a trade would have been placed.
+The SMA crossover strategy computes two rolling averages of daily closing price: a "short" window and a "long" window. When the short-window average rises above the long-window average, the strategy holds a long position (fully invested); when it falls below, the strategy exits to cash. Daily strategy returns are calculated using the *prior* day's signal, so the backtest never uses information unavailable at the time a trade would have been placed.
 
 ### 1.2 Parameter Space
 
@@ -46,11 +44,10 @@ Three distinct tests were run for each ticker, using 30 years of daily price dat
 
 Alongside total return, two additional metrics were calculated for every backtest.
 
-**Sharpe Ratio**
-Return earned per unit of volatility, annualized:
+**Sharpe Ratio**, return earned per unit of volatility, annualized:
 
-\[\boxed{
-\text{Sharpe Ratio} = \frac{\bar{r} - R_f}{\sigma_r} \times \sqrt{252}}
+\[
+\text{Sharpe Ratio} = \frac{\bar{r} - R_f}{\sigma_r} \times \sqrt{252}
 \]
 
 Where:
@@ -60,19 +57,12 @@ Where:
 * $\sigma_r$ is the standard deviation of the strategy's returns.
 * $\sqrt{252}$ annualizes the ratio, assuming daily returns and 252 trading days in a year.
 
+The Sharpe Ratio's traditional purpose is to compare an investment's risk-adjusted return against a "risk-free" alternative, typically short-term government debt (such as Treasury Bills) or cash, since those are considered to carry essentially zero risk of loss. The formula asks: how much extra return is being earned, per unit of risk taken, for choosing this risky investment instead of simply holding a safe, government-backed security? This is why the formula traditionally subtracts $R_f$ (the short-term government debt or cash rate) from the investment's return before dividing by volatility. Here, however, the comparison of interest is between the strategy and buy-and-hold on the same underlying asset, not against a risk-free alternative, so a risk-free rate of zero was assumed. With $R_f = 0$, the formula reduces to $\bar{r}/\sigma_r \times \sqrt{252}$. Since this same simplification is applied identically to both the strategy and buy-and-hold, and since typical risk-free rates are small relative to the return spreads observed in this study (often hundreds to tens of thousands of percentage points), including a nonzero $R_f$ would shift both Sharpe Ratios by a similarly small amount without materially changing which strategy ranks higher.
 
-The Sharpe Ratio's traditional purpose is to compare an investment's risk-adjusted return against a "risk-free" alternative, typically short-term government debt (such as Treasury Bills) or cash, since those are considered to carry essentially zero risk of loss. The formula asks how much extra return is being earned, per unit of risk taken, for choosing this risky investment instead of simply holding a safe, government-backed security? This is why the formula traditionally subtracts $R_f$ (the short-term government debt or cash rate) from the investment's return before dividing by volatility. Here, however, the comparison of interest is between the strategy and buy-and-hold on the same underlying asset, not against a risk-free alternative, so a risk-free rate of zero was assumed. With $R_f = 0$, the formula reduces to $\bar{r}/\sigma_r \times \sqrt{252}$. Since this same simplification is applied identically to both the strategy and buy-and-hold, and since typical risk-free rates are small relative to the return spreads observed in this study, including a nonzero $R_f$ would shift both Sharpe Ratios by a similarly small amount without materially changing which strategy ranks higher.
+**Max Drawdown**, the largest peak-to-trough decline in cumulative portfolio value over the test period:
 
-A higher Sharpe Ratio indicates more return earned per unit of risk taken, whether from a higher average return, lower volatility, or both. It is a measure of *efficiency*, not of total profit. This distinction matters directly for interpreting the results below: AAPL's best-performing strategy shows a *higher* Sharpe Ratio than buy-and-hold (0.83 vs. 0.78) despite capturing a small fraction of buy-and-hold's total return, meaning the strategy achieved its much smaller return more smoothly than buy-and-hold achieved its much larger one. A higher Sharpe Ratio should therefore not be read as "the strategy performed better" in an absolute sense, only that it performed more efficiently relative to the volatility it experienced.
-
-
-![Sharpe_ratio Comparison](../outputs/figures/sharpe_comparison.png)
-
-**Max Drawdown**
-The largest peak-to-trough decline in cumulative portfolio value over the test period:
-
-\[\boxed{
-\text{Max Drawdown} = \min \left\{ \frac{V_t - \max_{s \le t} V_s}{\max_{s \le t} V_s} \; : \; t = 1, 2, \ldots, T \right\}}
+\[
+\text{Max Drawdown} = \min \left\{ \frac{V_t - \max_{s \le t} V_s}{\max_{s \le t} V_s} \; : \; t = 1, 2, \ldots, T \right\}
 \]
 
 Where:
@@ -82,12 +72,11 @@ Where:
 * $T$ is the total number of days in the time series.
 * The curly braces denote the set of values obtained by computing the expression for every day $t$ from $1$ to $T$; $\min\{\cdot\}$ then selects the smallest (most negative) value from that set, the single worst decline from any prior peak.
 
-
 Max Drawdown answers a different question than Sharpe Ratio. Rather than measuring return relative to volatility on average, it captures the single worst outcome an investor would have actually lived through: the largest percentage loss from any high point to the lowest point that followed it, before a new high was eventually reached. This makes it a useful complement to Sharpe Ratio for evaluating a strategy like SMA crossover, whose core rationale is not necessarily to earn a smoother average return, but specifically to avoid being invested during the most severe declines. A strategy could show a similar or even worse Sharpe Ratio than buy-and-hold while still meaningfully reducing Max Drawdown, if it tends to sit out sharp crashes but also misses some ordinary day-to-day gains along the way. Measuring both metrics side by side allows these two distinct effects, smoother average risk-adjusted return versus protection from the single worst decline, to be evaluated separately rather than conflated into one number.
 
 ### 1.5 Transaction Costs
 
-A simplified transaction cost of 0.1% (combining estimated commission and slippage) was applied to every trade, every time the strategy's signal flipped from bullish to bearish or vice versa. This is a standard simplifying assumption of real-world costs, order size, and liquidity. Re-running the full analysis with this cost included did not change any of the three core findings. If anything, it strengthened the parameter instability finding (see Section 4), since it removed the one ticker (SPY) that had previously shown identical windows in both directions.
+A simplified transaction cost of 0.1% (combining estimated commission and slippage) was applied to every trade, every time the strategy's signal flipped from bullish to bearish or vice versa. This is a standard simplifying assumption; real-world costs vary by broker, order size, and liquidity. Re-running the full analysis with this cost included did not change any of the three core findings. If anything, it strengthened the parameter instability finding (see Section 4), since it removed the one ticker (SPY) that had previously shown identical windows in both directions.
 
 ### 1.6 Tickers Tested
 
@@ -99,8 +88,6 @@ Four tickers were selected specifically to represent different growth/volatility
 | SPY | Diversified broad market index | Tests whether findings hold for "the market" generally, not one exceptional company |
 | DIS | Choppy, non-monotonic (multi-year declines and recoveries) | Deliberately chosen as a favorable case for trend-following, which is theoretically suited to volatile, range-bound conditions |
 | KO | Slow, low-volatility, mature blue chip | A middle-ground control between AAPL's extremity and DIS's volatility |
-
-![All Tickers Equity Curve](../outputs/figures/all_tickers_equity_curves.png)
 
 ---
 
@@ -134,7 +121,7 @@ Across 8 total train/test trials (4 tickers x 2 directions, with transaction cos
 | KO | A | -4.4% | -250.6% | No, no in-sample edge to begin with |
 | KO | B | -237.1% | -145.6% | No, no in-sample edge to begin with |
 
-The classic overfitting signature, a genuine in-sample win demonstrated by a positive exess return (shown table above collapsing)out-of-sample, was directly confirmed in 3 of 8 trials. The remaining 5 trials fall into two further categories, worth distinguishing explicitly:
+The classic overfitting signature, a genuine in-sample win collapsing out-of-sample, was directly confirmed in 3 of 8 trials. The remaining 5 trials fall into two further categories, worth distinguishing explicitly:
 
 - **No in-sample edge was ever found** (AAPL, both directions; KO, both directions): every window pair underperformed buy-and-hold even during training, before out-of-sample testing was applied. This is arguably a *stronger* form of the same underlying finding than classic overfitting. SMA crossover failed to identify durable value regardless of which period was used to search for it, meaning there was no edge to lose in the first place.
 - **A reversed pattern** (SPY, Direction B): a training-period loss followed by a test-period gain. This is most plausibly attributable to chance rather than a genuine signal, and is reported here in the interest of completeness rather than omitted for not fitting the pattern cleanly.
@@ -175,11 +162,29 @@ Unlike the first two findings, drawdown protection showed real value, but not un
 | DIS | -67.9% | 82% |
 | KO | -55.0% | 14% |
 
-**AAPL and KO** both show a threshold effect: drawdown protection deteriorates or reverses once the long window reaches roughly 150 days or more. For AAPL, the average strategy drawdown improves to -66.2% for long windows under 150 days, but worsens to -82.3% (essentially matching buy-and-hold) for long windows of 150 days or more. This is consistent with the intuition that a very slow-reacting average fails to exit a position before most of a decline has already occurred. **SPY and DIS** show no such threshold breakdown. Protection remains strong even at 150-200 day long windows.**KO is the clear outlier**: only 14% of window pairs produced a smaller drawdown than simply holding the stock, the lowest protection rate of any ticker tested, by a wide margin. KO's slow, low-volatility, gradually-trending price behavior appears to work against a trend-following approach, since there is no sharp, fast decline for the strategy to sidestep the way there was during, for example, the 2020 COVID crash or the dot-com bust that shaped AAPL, SPY, and DIS's histories.
+**AAPL and KO** both show a threshold effect: drawdown protection deteriorates or reverses once the long window reaches roughly 150 days or more. For AAPL, the average strategy drawdown improves to -66.2% for long windows under 150 days, but worsens to -82.3% (essentially matching buy-and-hold) for long windows of 150 days or more. This is consistent with the intuition that a very slow-reacting average fails to exit a position before most of a decline has already occurred.
+
+**SPY and DIS** show no such threshold breakdown. Protection remains strong even at 150-200 day long windows.
+
+**KO is the clear outlier**: only 14% of window pairs produced a smaller drawdown than simply holding the stock, the lowest protection rate of any ticker tested, by a wide margin. KO's slow, low-volatility, gradually-trending price behavior appears to work against a trend-following approach, since there is no sharp, fast decline for the strategy to sidestep the way there was during, for example, the 2020 COVID crash or the dot-com bust that shaped AAPL, SPY, and DIS's histories.
 
 ![Max Drawdown vs. long window, per ticker, with buy-and-hold's drawdown shown as a dashed reference line](../outputs/figures/drawdown_by_window.png)
 
 SMA crossover's theoretical advantage, sitting out severe drawdowns, is real, but conditional on both the window pair chosen and the specific character of the underlying stock's price behavior. It should not be assumed to transfer automatically from one asset to another.
+
+---
+
+## 6. Cross-Ticker Perspective
+
+AAPL's results, taken alone, are unusually one-sided: the stock compounded roughly 1,331x over 30 years, and no SMA window pair, even with full hindsight, could capture more than about 42% of that return.
+
+![AAPL cumulative growth of $1: SMA crossover strategy vs. buy-and-hold, 1996-2026 (log scale)](../outputs/figures/aapl_equity_curve.png)
+
+*Note: log scale used due to the extreme magnitude of AAPL's total return; the visual gap between the two lines significantly understates the actual dollar/percentage difference.*
+
+This reflects the mechanical reality that any strategy periodically exiting the market forfeits a share of extreme, sustained compounding, and that forfeiture is magnified the more extreme the compounding is.
+
+Testing SPY, DIS, and KO confirmed that this is not solely an artifact of AAPL's exceptional performance. The overfitting and parameter instability findings held across all four tickers regardless of their growth profile. DIS stands out as the one case where a window pair beat buy-and-hold on raw return with full hindsight, but this advantage evaporated under honest train/test validation in both directions, reinforcing rather than undermining the overfitting finding. The drawdown protection finding, by contrast, did vary meaningfully by ticker, showing that not every conclusion generalizes equally. Some findings are closer to universal properties of the strategy family, while others depend on the specific asset being tested.
 
 ---
 
@@ -197,6 +202,9 @@ The findings are consistent across all four tested, but a broader universe of st
 **The train/test split uses only two 15-year halves.**
 A more granular walk-forward validation (e.g., rolling shorter windows) was not performed here and is a natural extension.
 
+**MACD and other trend-following variants were not tested in this phase.**
+They are a planned follow-up, given their conceptual similarity but different underlying mechanics (EMA-based, multi-line signal).
+
 ---
 
 ## 8. Conclusion
@@ -205,4 +213,4 @@ Across every validation method applied, regime-specific splits, two-directional 
 
 The one property of the strategy family that held up with meaningful (if inconsistent) strength, reduced maximum drawdown, is real and worth taking seriously, but it is neither universal nor guaranteed: it depends on both the window pair selected and the underlying asset's specific price behavior, and it did not compensate for the return given up on any of the tickers tested here.
 
-A secondary, methodological finding emerged in the course of this investigation, the specific parameters that appeared optimal during training were unstable across time for every ticker tested, and apparent in-sample "wins" consistently failed to survive out-of-sample validation, a pattern consistent with what the finance literature terms backtest overfitting. This underscores that any claimed strategy edge, in this domain or elsewhere, should be treated skeptically until it has been tested on data the selection process never saw.
+A secondary, methodological finding emerged in the course of this investigation: the specific parameters that appeared optimal during training were unstable across time for every ticker tested, and apparent in-sample "wins" consistently failed to survive out-of-sample validation, a pattern consistent with what the finance literature terms backtest overfitting. This underscores that any claimed strategy edge, in this domain or elsewhere, should be treated skeptically until it has been tested on data the selection process never saw.
