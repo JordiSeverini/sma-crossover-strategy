@@ -24,7 +24,7 @@ Using 30 years of daily price data (1996-2026) across four tickers (AAPL, SPY, D
 - **There is no stable "optimal" window.** For every ticker tested, the best-performing short/long window pair shifted substantially depending on which historical period was used to find it.
 - **Drawdown protection is real, but inconsistent.** SMA crossover meaningfully reduced worst-case losses for three of four tickers, but this benefit reversed for long-lag windows on AAPL and was almost entirely absent for KO.
 - Part of this comes down to a structural limitation: SMA crossover always trades one day behind its own signal, so it's inherently reactive. Part of it comes down to timing: the 30-year test period includes an unusually long, strong bull market, an environment where any strategy that periodically exits the market gives up compounding it rarely gets back.
-The full methodology, all four tickers' results, and the complete set of visuals are in [`Report/Technical_report.md`](Report/Technical_report.md) (also available as a [PDF](Report/Technical_report.pdf)).
+The full methodology, all four tickers' results, and the complete set of visuals are here [PDF](Report/Technical_report.pdf)).
  
 ## Project structure
  
