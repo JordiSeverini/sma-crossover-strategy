@@ -20,8 +20,6 @@ def run_backtest(price_df, short_window, long_window, transaction_cost_pct = 0.0
     # ===================================================
     # CREATE SIMPLE MOVING AVERAGES (SMA) #
     # ===================================================
-    # .rolling() groups data into chunks of a fixed size and moves that chunk one row at a time down the DataFrame.
-    # .mean() calculates the mean of the window
     df["SMA_SHORT"] = df["Close"].rolling(window=short_window).mean()
     df["SMA_LONG"] = df["Close"].rolling(window=long_window).mean()
 
@@ -69,10 +67,7 @@ def run_backtest(price_df, short_window, long_window, transaction_cost_pct = 0.0
     trade_occurred = df["Signal"].diff().abs() > 0
 
     
-    # NOTE TO SELF: what this line actually does
-
-    # df.loc[trade_occurred, "Strategy_Return"] = df.loc[trade_occurred, "Strategy_Return"] - transaction_cost_pct
-    #
+    # NOTE TO SELF: 
     # trade_occurred = a True/False mask, True only on days a trade happened
     #
     # RIGHT side: reads the CURRENT Strategy_Return values, but only on trade days,
@@ -96,12 +91,12 @@ def run_backtest(price_df, short_window, long_window, transaction_cost_pct = 0.0
     df["Cumulative_Market"] = (1 + df["Market_Return"]).cumprod()
     df["Cumulative_Strategy"] = (1 + df["Strategy_Return"]).cumprod()
 
-     # ===================================================
-        # MAX DRAWDOWN #
-        # ===================================================
-        # Max Drawdown = the largest peak-to-trough decline in cumulative value.
-        # Answers: "what's the worst loss I'd have experienced if I'd bought at the
-        # best possible moment and held through to the worst point after it?"
+    # ===================================================
+    # MAX DRAWDOWN #
+    # ===================================================
+    # Max Drawdown = the largest peak-to-trough decline in cumulative value.
+    # Answers: "what's the worst loss I'd have experienced if I'd bought at the
+    # best possible moment and held through to the worst point after it?"
     def calculate_max_drawdown(cumulative_series):
             running_max = cumulative_series.cummax()
             drawdown = (cumulative_series - running_max) / running_max
@@ -116,7 +111,7 @@ def run_backtest(price_df, short_window, long_window, transaction_cost_pct = 0.0
     total_market_return = df["Cumulative_Market"].iloc[-1] - 1
     total_strategy_return = df["Cumulative_Strategy"].iloc[-1] - 1
 
-        # SHARPE RATIO #
+    # SHARPE RATIO #
     # ===================================================
     # Sharpe Ratio = (average daily return / standard deviation of daily returns) * sqrt(252)
     # Answers: "how much return am I getting per unit of risk taken?"
