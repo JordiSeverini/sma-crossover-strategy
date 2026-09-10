@@ -52,28 +52,3 @@ sma-crossover-strategy/
 └── README.md
 ```
  
-## How to run it
- 
-This assumes you've cloned the repository to your own machine and are running commands from a terminal, inside the project's root folder.
- 
-```bash
-git clone https://github.com/<your-username>/sma-crossover-strategy.git
-cd sma-crossover-strategy
- 
-pip install yfinance pandas numpy matplotlib
- 
-python analysis/main_analysis.py
-```
- 
-This downloads 30 years of daily price data for AAPL, SPY, DIS, and KO, runs the full grid search and train/test validation for each, and saves results to `outputs/all_results.pkl` for the visual scripts to use.
- 
-To regenerate the charts (fast, loads from the saved results rather than re-running the analysis):
- 
-```bash
-python visuals/overfitting_chart.py
-python visuals/instability_chart.py
-python visuals/drawdown_chart.py
-python visuals/sharpe_chart.py
-python visuals/equity_curve.py
-python visuals/all_tickers_equity_curve.py
-```
