@@ -4,7 +4,7 @@ A from-scratch investigation into whether a classic technical trading rule, the 
  
 ## Why I built this
  
-I started this project wanting to build a basic trading strategy: buy when a short-term moving average crosses above a long-term one, sell when it crosses back below. It's one of the first strategies anyone learns in quant finance, and it's easy to code up in an afternoon.
+I started this project wanting to build a basic trading strategy: buy when a short-term moving average crosses above a long-term one, sell when it crosses back below.
  
 What I didn't expect was how much the project would grow once I started asking harder questions. The first version, testing SMA crossover on AAPL over a few years, showed the strategy losing badly to just buying and holding. My first instinct was that I'd picked a bad time period. So I extended the test window. Then I started wondering whether the "best" window pair I'd found was actually meaningful, or whether I'd just gotten lucky on that specific slice of history. That question turned into a proper train/test validation design. Once I had that working, I wanted to know if the result was specific to AAPL, so I added three more tickers with very different growth and volatility profiles. Along the way I added risk-adjusted metrics, realistic transaction costs, and a series of explicit "thesis checks" to verify each finding actually held up across every ticker, not just the one I happened to look at first.
  
